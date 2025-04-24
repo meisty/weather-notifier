@@ -1,0 +1,13 @@
+postcode: "SW1A 1AA"  # London example
+
+thresholds:
+  temperature:
+    min: 0         # Alert if temp falls below 0°C
+    max: 30        # Alert if temp rises above 30°C
+  rain_chance: 70   # Alert if rain chance exceeds 70%
+  uv_index: 7       # Alert if UV index is 7 or higher
+  pollen: "high"    # Alert if pollen is "high" or worse
+
+discord:
+  webhook_url: "https://discord.com/api/webhooks/xxxx/yyyy"
+
