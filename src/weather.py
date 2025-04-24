@@ -122,8 +122,3 @@ if __name__ == "__main__":
 
     config = load_config()
     postcode = get_postcode(config)
-    weather = get_current_weather(postcode)
-    tomorrow = get_tomorrows_weather(postcode)
-    todays_forecast = get_todays_forecast(postcode)
-
-    print(todays_forecast)

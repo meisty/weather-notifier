@@ -44,7 +44,6 @@ def main():
     postcode = get_postcode(config)
     discord_webhook_url = config['discord']['webhook_url']
     send_daily_message_if_needed(postcode, discord_webhook_url)
-    mark_sent_today()
     send_current_weather(postcode, discord_webhook_url)
 
 if __name__ == "__main__":
