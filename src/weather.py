@@ -13,6 +13,10 @@ def get_postcode(config):
     postcode = config["postcode"]
     return postcode
 
+def get_rain_chance_threshold(config):
+    chance_of_rain = config['thresholds']['rain_chance']
+    return chance_of_rain
+
 def build_params(postcode, extra=""):
     return f"?q={postcode}&key={api_key}&{extra}" if extra else f"?q={postcode}&key={api_key}"
 
@@ -64,9 +68,18 @@ def get_current_weather(postcode):
 
 def get_todays_forecast(postcode):
     """Fetches today's forecast from WeatherAPI."""
-    params = build_params(postcode, extra="days=1")
-    response = requests.get(f"{api_base_url}/forecast.json{params}")
-    data = response.json()
+    try:
+        params = build_params(postcode, extra="days=1")
+        response = requests.get(f"{api_base_url}/forecast.json{params}")
+        response.raise_for_status() # Raise HTTPError for bad responses (4xx and 5xx)
+        data = response.json()
+    
+    except requests.RequestException as e:
+        print(f"[ERROR] Failed to fetch today's forecast: {e}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] Failed to parse JSON response: {e}")
+        return None
 
     # Extract today's forecast
     location = data['location']
@@ -111,8 +124,8 @@ def get_tomorrows_forecast(postcode):
     )
     return message
 
-def umbrella_needed(chance_of_rain):
-    if int(chance_of_rain) > 66:
+def umbrella_needed(chance_of_rain, rain_chance_threshold):
+    if int(chance_of_rain) > int(rain_chance_threshold):
         return "You best bring an umbrella"
     else:
         return "No umbrella needed today."
