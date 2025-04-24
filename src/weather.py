@@ -46,6 +46,7 @@ def get_current_weather(postcode):
     try:
         params = build_params(postcode)
         response = requests.get(f"{api_base_url}/current.json{params}")
+        response.raise_for_status()
         data = response.json()
 
     except requests.RequestException as e:
@@ -104,10 +105,11 @@ def get_tomorrows_forecast(postcode):
     try:
         params = build_params(postcode, extra="days=2")
         response = requests.get(f"{api_base_url}/forecast.json{params}")
+        response.raise_for_status()
         data = response.json()
 
     except requests.RequestException as e:
-        print(f"[ERROR] Failed to fetch tomorrows forecast: {e}")
+        print(f"[ERROR] Failed to fetch tomorrow's forecast: {e}")
         return None
     
     tomorrow = data['forecast']['forecastday'][1]
