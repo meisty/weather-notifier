@@ -30,7 +30,6 @@ def send_daily_message_if_needed(postcode, discord_webhook_url):
 
     todays_forecast_msg = get_todays_forecast(postcode)
     send_to_discord(discord_webhook_url, todays_forecast_msg)
-    send_to_discord(discord_webhook_url, "-"*40)
     tomorrows_forecast_msg = get_tomorrows_forecast(postcode)
     send_to_discord(discord_webhook_url, tomorrows_forecast_msg)
     mark_sent_today()

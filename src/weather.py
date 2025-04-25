@@ -2,6 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import json
+from utils import generate_spacer
 
 env_path = ".env"
 load_dotenv(dotenv_path=env_path)
@@ -57,6 +58,7 @@ def get_current_weather(postcode):
     emoji = determine_condition(data['current']['condition']['text'].lower())
 
     message = (
+            f"{generate_spacer()}\n"
             f"📍 **Current Weather for {location}**\n"
             f"{emoji} **Current Condition**: {data['current']['condition']['text']}\n"
             f"🌡️ **Current Temp**: {data['current']['temp_c']}°C\n"
@@ -89,6 +91,7 @@ def get_todays_forecast(postcode):
 
     # Build the message
     message = (
+        f"{generate_spacer()}\n"
         f"📅 **Weather Forecast for {today['date']} for {location['name']}**\n"
         f"🌡️ **Temp**: {today['day']['mintemp_c']}°C - {today['day']['maxtemp_c']}°C (Avg: {today['day']['avgtemp_c']}°C)\n"
         f"🌧️ **Chance of Rain**: {today['day']['daily_chance_of_rain']}%\n"
@@ -116,6 +119,7 @@ def get_tomorrows_forecast(postcode):
     location = data['location']
 
     message = (
+            f"{generate_spacer()}\n"
             f"📅 **Weather Forecast for {tomorrow['date']} for {location['name']}**\n"
             f"🔥 **Max Temp**: {tomorrow['day']['maxtemp_c']}°C\n"
             f"🧊 **Min Temp**: {tomorrow['day']['mintemp_c']}°C\n"
