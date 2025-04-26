@@ -1,6 +1,9 @@
 import requests
 from datetime import datetime, timedelta
 from utils import generate_spacer
+from config_loader import load_config
+
+CONFIG_PATH="config/config.yaml"
 
 def categorise_pollen_levels(value, threshold):
     if value is None:
@@ -13,6 +16,7 @@ def categorise_pollen_levels(value, threshold):
         return "🔴 High"
 
 def get_pollen_forecast(latitude, longitude):
+    config = load_config(path=CONFIG_PATH)
     url = "https://air-quality-api.open-meteo.com/v1/air-quality"
     params = {
 	"latitude": latitude,
@@ -37,10 +41,17 @@ def get_pollen_forecast(latitude, longitude):
             tree_values.append(data["hourly"]["birch_pollen"][idx])
             weed_values.append(data["hourly"]["ragweed_pollen"][idx])
 
+    pollen_thresholds = {}
+    for pollen_type in ["grass", "tree", "weed"]:
+        pollen_thresholds[pollen_type] = {
+                "low": config['thresholds']['pollen'][pollen_type]['low'],
+                "medium": config['thresholds']['pollen'][pollen_type]['medium']
+        }
+
     summary = {
-            "grass": categorise_pollen_levels(max(grass_values, default=None),{"low": 20, "medium": 50}),
-            "tree": categorise_pollen_levels(max(tree_values, default=None),{"low": 30, "medium": 60}),
-            "weed": categorise_pollen_levels(max(weed_values, default=None),{"low": 10, "medium": 40}),
+            "grass": categorise_pollen_levels(max(grass_values, default=None), pollen_thresholds['grass']),
+            "tree": categorise_pollen_levels(max(tree_values, default=None), pollen_thresholds['tree']),
+            "weed": categorise_pollen_levels(max(weed_values, default=None), pollen_thresholds['weed']),
     }
 
     message = (

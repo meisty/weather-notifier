@@ -7,13 +7,13 @@ thresholds:
   rain_chance: 70   # Alert if rain chance exceeds 70%
   uv_index: 7       # Alert if UV index is 7 or higher
   pollen: # individual thresholds for different levels of pollen per grass, tree and weed
-    grass_pollen_threshold:
+    grass:
       low: 30
       medium: 50
-    tree_pollen_threshold:
+    tree:
       low: 30
       medium: 60
-    weed_pollen_threshold:
+    weed:
       low: 40
       medium: 60
 discord:

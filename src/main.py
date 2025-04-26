@@ -22,6 +22,8 @@ def already_sent_today():
 def mark_sent_today():
     """Mark today as sent. """
     today = get_todays_date()
+    if not os.path.exists("data"):
+        os.makedirs("data")
     with open("data/last_sent.txt", "w") as f:
         f.write(today)
 
