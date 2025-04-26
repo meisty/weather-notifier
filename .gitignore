@@ -175,3 +175,6 @@ cython_debug/
 
 # last sent log file
 data/last_sent.txt
+
+# run file
+run.sh
