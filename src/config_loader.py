@@ -10,7 +10,8 @@ def load_config(path=CONFIG_PATH):
     with open(path, "r") as file:
         config = yaml.safe_load(file)
 
-    config["discord"]["webhook_url"] = os.getenv("DISCORD_WEBHOOK", config["discord"].get("webhook_url"))
+    config["discord"]["webhook_url"] = os.getenv("DISCORD_WEBHOOK_URL", config["discord"].get("webhook_url"))
+    config["postcode"] = os.getenv("POSTCODE", config.get("postcode"))
 
     # Sanity checks (basic validation)
 
