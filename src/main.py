@@ -1,6 +1,8 @@
 from config_loader import load_config
 from weather import get_postcode, get_todays_forecast, get_tomorrows_forecast, get_current_weather
 from discord import send_to_discord
+from pollen import get_pollen_forecast
+from utils import postcode_to_coords
 
 import datetime
 import os
@@ -20,6 +22,8 @@ def already_sent_today():
 def mark_sent_today():
     """Mark today as sent. """
     today = get_todays_date()
+    if not os.path.exists("data"):
+        os.makedirs("data")
     with open("data/last_sent.txt", "w") as f:
         f.write(today)
 
@@ -28,10 +32,20 @@ def send_daily_message_if_needed(postcode, discord_webhook_url):
         print("✅ Daily message already sent.")
         return
 
+    # Send daily forecast for today
     todays_forecast_msg = get_todays_forecast(postcode)
     send_to_discord(discord_webhook_url, todays_forecast_msg)
+    
+    # Send daily forecast for tomorrow
     tomorrows_forecast_msg = get_tomorrows_forecast(postcode)
     send_to_discord(discord_webhook_url, tomorrows_forecast_msg)
+
+    # Send pollen forecast for the next 24 hours
+    lat,lng = postcode_to_coords(postcode)
+    pollen_message = get_pollen_forecast(lat, lng)
+    send_to_discord(discord_webhook_url, pollen_message)
+
+    # Mark message as sent for today so its not sent multiple times
     mark_sent_today()
 
 def send_current_weather(postcode, discord_webhook_url):

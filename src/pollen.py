@@ -1,0 +1,65 @@
+import requests
+from datetime import datetime, timedelta
+from utils import generate_spacer
+from config_loader import load_config
+
+CONFIG_PATH="config/config.yaml"
+
+def categorise_pollen_levels(value, threshold):
+    if value is None:
+        return "No data"
+    elif value <= threshold['low']:
+        return "🟢 Low"
+    elif value <= threshold["medium"]:
+        return "🟠 Medium"
+    else:
+        return "🔴 High"
+
+def get_pollen_forecast(latitude, longitude):
+    config = load_config(path=CONFIG_PATH)
+    url = "https://air-quality-api.open-meteo.com/v1/air-quality"
+    params = {
+	"latitude": latitude,
+	"longitude": longitude,
+	"hourly": ["pm10", "pm2_5", "grass_pollen", "birch_pollen", "ragweed_pollen"]
+    }   
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    data = response.json()
+
+    now = datetime.now()
+    next_24h = [(now + timedelta(hours=i)).strftime("%Y-%m-%dT%H:00") for i in range(24)]
+
+    grass_values = []
+    tree_values = []
+    weed_values = []
+
+    for idx,time in enumerate(data["hourly"]["time"]):
+        if time in next_24h:
+            grass_values.append(data["hourly"]["grass_pollen"][idx])
+            tree_values.append(data["hourly"]["birch_pollen"][idx])
+            weed_values.append(data["hourly"]["ragweed_pollen"][idx])
+
+    pollen_thresholds = {}
+    for pollen_type in ["grass", "tree", "weed"]:
+        pollen_thresholds[pollen_type] = {
+                "low": config['thresholds']['pollen'][pollen_type]['low'],
+                "medium": config['thresholds']['pollen'][pollen_type]['medium']
+        }
+
+    summary = {
+            "grass": categorise_pollen_levels(max(grass_values, default=None), pollen_thresholds['grass']),
+            "tree": categorise_pollen_levels(max(tree_values, default=None), pollen_thresholds['tree']),
+            "weed": categorise_pollen_levels(max(weed_values, default=None), pollen_thresholds['weed']),
+    }
+
+    message = (
+            f"{generate_spacer()}\n"
+            f"**Pollen forecast for the next 24 hours**\n"
+            f"**Grass Pollen**: {summary['grass']}\n"
+            f"**Tree Pollen**: {summary['tree']}\n"
+            f"**Weed Pollen**: {summary['weed']}\n"
+    )
+
+    return message
