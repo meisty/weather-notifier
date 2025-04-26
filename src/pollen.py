@@ -57,7 +57,7 @@ def get_pollen_forecast(latitude, longitude):
 
     weed_pollen_values = [value for value in [mugwort_values, ragweed_values] if value is not None]
     if weed_pollen_values:
-        flat_weed_pollen_values = [value for sublist in tree_pollen_values for value in sublist]
+        flat_weed_pollen_values = [value for sublist in weed_pollen_values for value in sublist]
         avg_weed_pollen_values = sum(flat_weed_pollen_values) / len(flat_weed_pollen_values)
         weed_values.append(avg_weed_pollen_values)
 
