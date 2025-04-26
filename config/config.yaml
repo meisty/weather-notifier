@@ -9,12 +9,12 @@ thresholds:
   pollen: # individual thresholds for different levels of pollen per grass, tree and weed
     grass:
       low: 30
-      medium: 50
+      medium: 60
     tree:
-      low: 30
-      medium: 60
+      low: 15
+      medium: 90
     weed:
-      low: 40
-      medium: 60
+      low: 10
+      medium: 50
 discord:
   webhook_url: "https://discord.com/api/webhooks/xxxx/yyyy"

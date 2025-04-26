@@ -88,13 +88,14 @@ def get_todays_forecast(postcode):
     location = data['location']
     today = data["forecast"]["forecastday"][0]
     current = data["current"]
+    evaluated_rain_forecast = evaluate_rain_forecast(today)
 
     # Build the message
     message = (
         f"{generate_spacer()}\n"
         f"📅 **Weather Forecast for {today['date']} for {location['name']}**\n"
         f"🌡️ **Temp**: {today['day']['mintemp_c']}°C - {today['day']['maxtemp_c']}°C (Avg: {today['day']['avgtemp_c']}°C)\n"
-        f"🌧️ **Chance of Rain**: {today['day']['daily_chance_of_rain']}%\n"
+        f"🌧️ **Chance of Rain**: {evaluated_rain_forecast}\n"
         f"☀️ **UV Index**: {today['day']['uv']}\n"
         f"🌤️ **Overall Condition**: {today['day']['condition']['text']}\n\n"
         f"🔹 **Current Temp**: {current['temp_c']}°C ({current['condition']['text']})\n"
@@ -117,6 +118,7 @@ def get_tomorrows_forecast(postcode):
     
     tomorrow = data['forecast']['forecastday'][1]
     location = data['location']
+    evaluated_rain_forecast = evaluate_rain_forecast(tomorrow)
 
     message = (
             f"{generate_spacer()}\n"
@@ -124,17 +126,25 @@ def get_tomorrows_forecast(postcode):
             f"🔥 **Max Temp**: {tomorrow['day']['maxtemp_c']}°C\n"
             f"🧊 **Min Temp**: {tomorrow['day']['mintemp_c']}°C\n"
             f"📊 **Avg Temp**: {tomorrow['day']['avgtemp_c']}°C\n"
-            f"🌧️ **Chance of Rain**: {tomorrow['day']['daily_chance_of_rain']}%\n"
+            f"🌧️ **Chance of Rain**: {evaluated_rain_forecast}\n"
             f"☀️  **UV Index**: {tomorrow['day']['uv']}\n"
             f"🌤️ **Overall Condition**: {tomorrow['day']['condition']['text']}\n\n"
     )
     return message
 
-def umbrella_needed(chance_of_rain, rain_chance_threshold):
-    if int(chance_of_rain) > int(rain_chance_threshold):
-        return "You best bring an umbrella"
+def evaluate_rain_forecast(forecast):
+    rain_chance = forecast['day']['daily_chance_of_rain']
+    precip_mm = forecast['day']['totalprecip_mm']
+
+    if rain_chance >= 50:
+        if precip_mm < 1:
+            return "Light rain possible"
+        elif precip_mm < 5:
+            return "Moderate rain possible"
+        else:
+            return "Heavy rain possible"
     else:
-        return "No umbrella needed today."
+        return "Low chance of rain"
 
 if __name__ == "__main__":
     from config_loader import load_config

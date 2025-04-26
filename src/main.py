@@ -2,30 +2,7 @@ from config_loader import load_config
 from weather import get_postcode, get_todays_forecast, get_tomorrows_forecast, get_current_weather
 from discord import send_to_discord
 from pollen import get_pollen_forecast
-from utils import postcode_to_coords
-
-import datetime
-import os
-
-def get_todays_date():
-    return datetime.date.today().isoformat()
-
-def already_sent_today():
-    """Check if the daily message was already sent"""
-    today = get_todays_date()
-    if os.path.exists("data/last_sent.txt"):
-        with open("data/last_sent.txt", "r") as f:
-            last_sent = f.read().strip()
-            return last_sent == today
-    return False
-
-def mark_sent_today():
-    """Mark today as sent. """
-    today = get_todays_date()
-    if not os.path.exists("data"):
-        os.makedirs("data")
-    with open("data/last_sent.txt", "w") as f:
-        f.write(today)
+from utils import postcode_to_coords, already_sent_today, mark_sent_today
 
 def send_daily_message_if_needed(postcode, discord_webhook_url):
     if already_sent_today():
