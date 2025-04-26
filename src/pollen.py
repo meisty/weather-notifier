@@ -21,7 +21,7 @@ def get_pollen_forecast(latitude, longitude):
     params = {
 	"latitude": latitude,
 	"longitude": longitude,
-	"hourly": ["pm10", "pm2_5", "grass_pollen", "birch_pollen", "ragweed_pollen"]
+	"hourly": ["pm10", "pm2_5", "grass_pollen", "alder_pollen", "birch_pollen", "mugwort_pollen", "ragweed_pollen"]
     }   
 
     response = requests.get(url, params=params)
@@ -32,14 +32,34 @@ def get_pollen_forecast(latitude, longitude):
     next_24h = [(now + timedelta(hours=i)).strftime("%Y-%m-%dT%H:00") for i in range(24)]
 
     grass_values = []
-    tree_values = []
-    weed_values = []
+    birch_tree_values = []
+    alder_tree_values = []
+    mugwort_values = []
+    ragweed_values = []
 
     for idx,time in enumerate(data["hourly"]["time"]):
         if time in next_24h:
             grass_values.append(data["hourly"]["grass_pollen"][idx])
-            tree_values.append(data["hourly"]["birch_pollen"][idx])
-            weed_values.append(data["hourly"]["ragweed_pollen"][idx])
+            birch_tree_values.append(data["hourly"]["birch_pollen"][idx])
+            alder_tree_values.append(data["hourly"]["alder_pollen"][idx])
+            ragweed_values.append(data["hourly"]["ragweed_pollen"][idx])
+            mugwort_values.append(data["hourly"]["mugwort_pollen"][idx])
+    
+    tree_values = []
+
+    tree_pollen_values = [value for value in [birch_tree_values, alder_tree_values] if value is not None]
+    if tree_pollen_values:
+        flat_tree_pollen_values = [value for sublist in tree_pollen_values for value in sublist]
+        avg_tree_pollen_values = sum(flat_tree_pollen_values) / len(flat_tree_pollen_values)
+        tree_values.append(avg_tree_pollen_values)
+
+    weed_values = []
+
+    weed_pollen_values = [value for value in [mugwort_values, ragweed_values] if value is not None]
+    if weed_pollen_values:
+        flat_weed_pollen_values = [value for sublist in tree_pollen_values for value in sublist]
+        avg_weed_pollen_values = sum(flat_weed_pollen_values) / len(flat_weed_pollen_values)
+        weed_values.append(avg_weed_pollen_values)
 
     pollen_thresholds = {}
     for pollen_type in ["grass", "tree", "weed"]:

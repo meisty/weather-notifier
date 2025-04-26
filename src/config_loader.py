@@ -17,6 +17,9 @@ def load_config(path=CONFIG_PATH):
 
     if not config["discord"]["webhook_url"]:
         raise ValueError("Discord webhook URL is required!")
+    
+    if not config["postcode"]:
+        raise ValueError("Postcode is required!")
 
     return config
 
