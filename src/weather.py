@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 import json
 from utils import generate_spacer
+from database import insert_weather_forecast
+import datetime
 
 env_path = ".env"
 load_dotenv(dotenv_path=env_path)
@@ -89,6 +91,25 @@ def get_todays_forecast(postcode):
     today = data["forecast"]["forecastday"][0]
     current = data["current"]
     evaluated_rain_forecast = evaluate_rain_forecast(today)
+    summary = f"{today['day']['condition']['text']}"
+
+    # Insert forecast data into the database
+    insert_weather_forecast(
+            today['date'],
+            location['name'],
+            today['day']['condition']['text'],
+            today['day']['mintemp_c'],
+            today['day']['maxtemp_c'],
+            today['day']['avgtemp_c'],
+            today['day']['daily_chance_of_rain'],
+            today['day']['totalprecip_mm'],
+            evaluated_rain_forecast,
+            today['day']['uv'],
+            today['day']['maxwind_mph'],
+            today['day']['avghumidity'],
+            summary,
+            datetime.datetime.now().isoformat()
+    )
 
     # Build the message
     message = (

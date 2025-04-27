@@ -29,7 +29,7 @@ def create_tables():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS weather_forecasts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT,
+        date TEXT UNIQUE,
         location TEXT,
         overall_condition TEXT,
         temperature_min REAL,
@@ -42,14 +42,14 @@ def create_tables():
         wind_mph REAL,
         humidity REAL,
         summary TEXT,
-        created_at TEXT  
+        created_at TEXT
     )
     ''')
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS pollen_forecasts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp TEXT,
+        timestamp TEXT UNIQUE,
         grass_reading REAL,
         grass_level TEXT,
         tree_reading REAL,
@@ -59,4 +59,20 @@ def create_tables():
         created_at TEXT
     )
     ''')
+
+def insert_weather_forecast(date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        INSERT OR IGNORE INTO weather_forecasts (
+            date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (
+        date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at
+    ))
+    
+    conn.commit()
+    conn.close()
+
 
