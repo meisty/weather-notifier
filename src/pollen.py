@@ -2,6 +2,7 @@ import requests
 from datetime import datetime, timedelta
 from utils import generate_spacer
 from config_loader import load_config
+from database import insert_pollen_forecast
 
 CONFIG_PATH="config/config.yaml"
 
@@ -73,6 +74,18 @@ def get_pollen_forecast(latitude, longitude):
             "tree": categorise_pollen_levels(max(tree_values, default=None), pollen_thresholds['tree']),
             "weed": categorise_pollen_levels(max(weed_values, default=None), pollen_thresholds['weed']),
     }
+
+    # Insert pollen forecast into database
+
+    insert_pollen_forecast(
+        timestamp = datetime.now().isoformat(),
+        grass_reading = max(grass_values, default=0),
+        grass_level = summary['grass'],
+        tree_reading = max(tree_values, default=0),
+        tree_level = summary['tree'],
+        weed_reading = max(weed_values, default=0),
+        weed_level = summary['weed']
+    )
 
     message = (
             f"{generate_spacer()}\n"

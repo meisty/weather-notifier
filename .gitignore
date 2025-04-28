@@ -173,8 +173,11 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# last sent log file
+# Ignore last sent log file
 data/last_sent.txt
 
-# run file
+# Ignore run file for local cron execution
 run.sh
+
+# Ignore all .db files in data/
+data/*.db

@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 import json
 from utils import generate_spacer
+from database import insert_weather_forecast, insert_current_weather
+import datetime
 
 env_path = ".env"
 load_dotenv(dotenv_path=env_path)
@@ -57,6 +59,22 @@ def get_current_weather(postcode):
     location = data['location']['name']
     emoji = determine_condition(data['current']['condition']['text'].lower())
 
+    # Insert data into the database
+
+    insert_current_weather(
+        timestamp = datetime.datetime.now().isoformat(),
+        location = location,
+        current_conditions = data['current']['condition']['text'],
+        current_temperature = data['current']['temp_c'],
+        feels_like_temperature = data['current']['feelslike_c'],
+        precipitation_in_mm = data['current']['precip_mm'],
+        humidity = data['current']['humidity'],
+        uv_index = data['current']['uv'],
+        wind_mph = data['current']['wind_mph'],
+        gust_mph = data['current']['gust_mph'],
+        cloud_coverage = data['current']['cloud']
+    )
+
     message = (
             f"{generate_spacer()}\n"
             f"📍 **Current Weather for {location}**\n"
@@ -89,6 +107,25 @@ def get_todays_forecast(postcode):
     today = data["forecast"]["forecastday"][0]
     current = data["current"]
     evaluated_rain_forecast = evaluate_rain_forecast(today)
+    summary = f"{today['day']['condition']['text']}"
+
+    # Insert forecast data into the database
+    insert_weather_forecast(
+            date = today['date'],
+            location = location['name'],
+            overall_condition = today['day']['condition']['text'],
+            temperature_min = today['day']['mintemp_c'],
+            temperature_max = today['day']['maxtemp_c'],
+            average_temperature = today['day']['avgtemp_c'],
+            rain_chance = today['day']['daily_chance_of_rain'],
+            rain_amount = today['day']['totalprecip_mm'],
+            evaluated_rain_chance = evaluated_rain_forecast,
+            uv_index = today['day']['uv'],
+            wind_mph = today['day']['maxwind_mph'],
+            humidity = today['day']['avghumidity'],
+            summary = summary,
+            created_at = datetime.datetime.now().isoformat()
+    )
 
     # Build the message
     message = (
@@ -119,6 +156,26 @@ def get_tomorrows_forecast(postcode):
     tomorrow = data['forecast']['forecastday'][1]
     location = data['location']
     evaluated_rain_forecast = evaluate_rain_forecast(tomorrow)
+    summary = f"{tomorrow['day']['condition']['text']}"
+
+    # insert forecast data into the database
+    insert_weather_forecast(
+            date = tomorrow['date'],
+            location = location['name'],
+            overall_condition = tomorrow['day']['condition']['text'],
+            temperature_min = tomorrow['day']['mintemp_c'],
+            temperature_max = tomorrow['day']['maxtemp_c'],
+            average_temperature = tomorrow['day']['avgtemp_c'],
+            rain_chance = tomorrow['day']['daily_chance_of_rain'],
+            rain_amount = tomorrow['day']['totalprecip_mm'],
+            evaluated_rain_chance = evaluated_rain_forecast,
+            uv_index = tomorrow['day']['uv'],
+            wind_mph = tomorrow['day']['maxwind_mph'],
+            humidity = tomorrow['day']['avghumidity'],
+            summary = summary,
+            created_at = datetime.datetime.now().isoformat()
+    )
+
 
     message = (
             f"{generate_spacer()}\n"

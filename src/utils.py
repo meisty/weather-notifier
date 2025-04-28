@@ -12,6 +12,10 @@ geocoder = OpenCageGeocode(key)
 def generate_spacer():
     return "-" * 40
 
+def check_data_directory_exists():
+    if not os.path.exists("data"):
+        os.makedirs("data")
+
 def postcode_to_coords(postcode):
     results = geocoder.geocode(postcode)
     if results and len(results):
@@ -36,7 +40,6 @@ def already_sent_today():
 def mark_sent_today():
     """Mark today as sent. """
     today = get_todays_date()
-    if not os.path.exists("data"):
-        os.makedirs("data")
+    check_data_directory_exists()
     with open("data/last_sent.txt", "w") as f:
         f.write(today)

@@ -3,6 +3,7 @@ from weather import get_postcode, get_todays_forecast, get_tomorrows_forecast, g
 from discord import send_to_discord
 from pollen import get_pollen_forecast
 from utils import postcode_to_coords, already_sent_today, mark_sent_today
+from database import create_tables
 
 def send_daily_message_if_needed(postcode, discord_webhook_url):
     if already_sent_today():
@@ -33,6 +34,9 @@ def main():
     config = load_config()
     postcode = get_postcode(config)
     discord_webhook_url = config['discord']['webhook_url']
+
+    create_tables()
+
     send_daily_message_if_needed(postcode, discord_webhook_url)
     send_current_weather(postcode, discord_webhook_url)
 
