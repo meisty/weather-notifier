@@ -62,17 +62,17 @@ def get_current_weather(postcode):
     # Insert data into the database
 
     insert_current_weather(
-        datetime.datetime.now().isoformat(),
-        location,
-        data['current']['condition']['text'],
-        data['current']['temp_c'],
-        data['current']['feelslike_c'],
-        data['current']['precip_mm'],
-        data['current']['humidity'],
-        data['current']['uv'],
-        data['current']['wind_mph'],
-        data['current']['gust_mph'],
-        data['current']['cloud']
+        timestamp = datetime.datetime.now().isoformat(),
+        location = location,
+        current_conditions = data['current']['condition']['text'],
+        current_temperature = data['current']['temp_c'],
+        feels_like_temperature = data['current']['feelslike_c'],
+        precipitation_in_mm = data['current']['precip_mm'],
+        humidity = data['current']['humidity'],
+        uv_index = data['current']['uv'],
+        wind_mph = data['current']['wind_mph'],
+        gust_mph = data['current']['gust_mph'],
+        cloud_coverage = data['current']['cloud']
     )
 
     message = (
@@ -111,20 +111,20 @@ def get_todays_forecast(postcode):
 
     # Insert forecast data into the database
     insert_weather_forecast(
-            today['date'],
-            location['name'],
-            today['day']['condition']['text'],
-            today['day']['mintemp_c'],
-            today['day']['maxtemp_c'],
-            today['day']['avgtemp_c'],
-            today['day']['daily_chance_of_rain'],
-            today['day']['totalprecip_mm'],
-            evaluated_rain_forecast,
-            today['day']['uv'],
-            today['day']['maxwind_mph'],
-            today['day']['avghumidity'],
-            summary,
-            datetime.datetime.now().isoformat()
+            date = today['date'],
+            location = location['name'],
+            overall_condition = today['day']['condition']['text'],
+            temperature_min = today['day']['mintemp_c'],
+            temperature_max = today['day']['maxtemp_c'],
+            average_temperature = today['day']['avgtemp_c'],
+            rain_chance = today['day']['daily_chance_of_rain'],
+            rain_amount = today['day']['totalprecip_mm'],
+            evaluated_rain_chance = evaluated_rain_forecast,
+            uv_index = today['day']['uv'],
+            wind_mph = today['day']['maxwind_mph'],
+            humidity = today['day']['avghumidity'],
+            summary = summary,
+            created_at = datetime.datetime.now().isoformat()
     )
 
     # Build the message
@@ -160,20 +160,20 @@ def get_tomorrows_forecast(postcode):
 
     # insert forecast data into the database
     insert_weather_forecast(
-            tomorrow['date'],
-            location['name'],
-            tomorrow['day']['condition']['text'],
-            tomorrow['day']['mintemp_c'],
-            tomorrow['day']['maxtemp_c'],
-            tomorrow['day']['avgtemp_c'],
-            tomorrow['day']['daily_chance_of_rain'],
-            tomorrow['day']['totalprecip_mm'],
-            evaluated_rain_forecast,
-            tomorrow['day']['uv'],
-            tomorrow['day']['maxwind_mph'],
-            tomorrow['day']['avghumidity'],
-            summary,
-            datetime.datetime.now().isoformat()
+            date = tomorrow['date'],
+            location = location['name'],
+            overall_condition = tomorrow['day']['condition']['text'],
+            temperature_min = tomorrow['day']['mintemp_c'],
+            temperature_max = tomorrow['day']['maxtemp_c'],
+            average_temperature = tomorrow['day']['avgtemp_c'],
+            rain_chance = tomorrow['day']['daily_chance_of_rain'],
+            rain_amount = tomorrow['day']['totalprecip_mm'],
+            evaluated_rain_chance = evaluated_rain_forecast,
+            uv_index = tomorrow['day']['uv'],
+            wind_mph = tomorrow['day']['maxwind_mph'],
+            humidity = tomorrow['day']['avghumidity'],
+            summary = summary,
+            created_at = datetime.datetime.now().isoformat()
     )
 
 

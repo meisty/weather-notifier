@@ -41,8 +41,7 @@ def create_tables():
         tree_reading REAL,
         tree_level TEXT,
         weed_reading REAL,
-        weed_level TEXT,
-        created_at TEXT
+        weed_level TEXT
     )
     ''')
 
@@ -88,6 +87,21 @@ def insert_current_weather(timestamp, location, current_conditions, current_temp
             timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (
         timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage
+    ))
+
+    conn.commit()
+    conn.close()
+
+def insert_pollen_forecast(timestamp, grass_reading, grass_level, tree_reading, tree_level, weed_reading, weed_level):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        INSERT OR IGNORE INTO pollen_forecasts (
+                   timestamp, grass_reading, grass_level, tree_reading, tree_level, weed_reading, weed_level)
+        VALUES (?, ?, ?, ?, ?, ?, ?)''', (
+        timestamp, grass_reading, grass_level, tree_reading, tree_level, weed_reading, weed_level
     ))
 
     conn.commit()
