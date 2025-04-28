@@ -79,11 +79,11 @@ def get_pollen_forecast(latitude, longitude):
 
     insert_pollen_forecast(
         timestamp = datetime.now().isoformat(),
-        grass_reading = max(grass_values),
+        grass_reading = max(grass_values, default=0),
         grass_level = summary['grass'],
-        tree_reading = max(tree_values),
+        tree_reading = max(tree_values, default=0),
         tree_level = summary['tree'],
-        weed_reading = max(weed_values),
+        weed_reading = max(weed_values, default=0),
         weed_level = summary['weed']
     )
 
