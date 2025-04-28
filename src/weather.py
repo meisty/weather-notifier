@@ -140,6 +140,26 @@ def get_tomorrows_forecast(postcode):
     tomorrow = data['forecast']['forecastday'][1]
     location = data['location']
     evaluated_rain_forecast = evaluate_rain_forecast(tomorrow)
+    summary = f"{tomorrow['day']['condition']['text']}"
+
+    # insert forecast data into the database
+    insert_weather_forecast(
+            tomorrow['date'],
+            location['name'],
+            tomorrow['day']['condition']['text'],
+            tomorrow['day']['mintemp_c'],
+            tomorrow['day']['maxtemp_c'],
+            tomorrow['day']['avgtemp_c'],
+            tomorrow['day']['daily_chance_of_rain'],
+            tomorrow['day']['totalprecip_mm'],
+            evaluated_rain_forecast,
+            tomorrow['day']['uv'],
+            tomorrow['day']['maxwind_mph'],
+            tomorrow['day']['avghumidity'],
+            summary,
+            datetime.datetime.now().isoformat()
+    )
+
 
     message = (
             f"{generate_spacer()}\n"
