@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 import json
 from utils import generate_spacer
-from database import insert_weather_forecast
+from database import insert_weather_forecast, insert_current_weather
 import datetime
 
 env_path = ".env"
@@ -58,6 +58,22 @@ def get_current_weather(postcode):
 
     location = data['location']['name']
     emoji = determine_condition(data['current']['condition']['text'].lower())
+
+    # Insert data into the database
+
+    insert_current_weather(
+        datetime.datetime.now().isoformat(),
+        location,
+        data['current']['condition']['text'],
+        data['current']['temp_c'],
+        data['current']['feelslike_c'],
+        data['current']['precip_mm'],
+        data['current']['humidity'],
+        data['current']['uv'],
+        data['current']['wind_mph'],
+        data['current']['gust_mph'],
+        data['current']['cloud']
+    )
 
     message = (
             f"{generate_spacer()}\n"

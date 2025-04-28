@@ -78,15 +78,16 @@ def insert_weather_forecast(date, location, overall_condition, temperature_min, 
     conn.commit()
     conn.close()
 
-def insert_current_weather():
+def insert_current_weather(timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage):
 
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
-
-    ''', (
-
+        INSERT OR IGNORE INTO current_weather (
+            timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (
+        timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage
     ))
 
     conn.commit()
