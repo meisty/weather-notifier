@@ -8,6 +8,9 @@ DB_PATH = "data/weather_data.db"
 def get_connection():
     return sqlite3.Connection(DB_PATH)
 
+def close_connection(conn):
+    conn.close()
+
 def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
@@ -15,7 +18,7 @@ def create_tables():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS weather_forecasts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT UNIQUE,
+        date TEXT,
         location TEXT,
         overall_condition TEXT,
         temperature_min REAL,
@@ -28,7 +31,8 @@ def create_tables():
         wind_mph REAL,
         humidity REAL,
         summary TEXT,
-        created_at TEXT
+        created_at TEXT,
+        UNIQUE(date, location)
     )
     ''')
 
@@ -65,9 +69,8 @@ def create_tables():
     conn.commit()
     conn.close()
 
-def insert_weather_forecast(date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at):
+def insert_weather_forecast(date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at, conn):
 
-    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -78,11 +81,9 @@ def insert_weather_forecast(date, location, overall_condition, temperature_min, 
     ))
     
     conn.commit()
-    conn.close()
 
-def insert_current_weather(timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage):
+def insert_current_weather(timestamp, location, current_conditions, current_temperature, feels_like_temperature, precipitation_in_mm, humidity, uv_index, wind_mph, gust_mph, cloud_coverage, conn):
 
-    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -93,11 +94,9 @@ def insert_current_weather(timestamp, location, current_conditions, current_temp
     ))
 
     conn.commit()
-    conn.close()
 
-def insert_pollen_forecast(timestamp, grass_reading, grass_level, tree_reading, tree_level, weed_reading, weed_level):
+def insert_pollen_forecast(timestamp, grass_reading, grass_level, tree_reading, tree_level, weed_reading, weed_level, conn):
 
-    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -108,4 +107,3 @@ def insert_pollen_forecast(timestamp, grass_reading, grass_level, tree_reading, 
     ))
 
     conn.commit()
-    conn.close()

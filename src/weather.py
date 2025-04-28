@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 import json
 from utils import generate_spacer
-from database import insert_weather_forecast, insert_current_weather
+from database import insert_weather_forecast, insert_current_weather, get_connection, close_connection
 import datetime
 
 env_path = ".env"
@@ -59,6 +59,8 @@ def get_current_weather(postcode):
     location = data['location']['name']
     emoji = determine_condition(data['current']['condition']['text'].lower())
 
+    conn = get_connection()
+
     # Insert data into the database
 
     insert_current_weather(
@@ -72,8 +74,11 @@ def get_current_weather(postcode):
         uv_index = data['current']['uv'],
         wind_mph = data['current']['wind_mph'],
         gust_mph = data['current']['gust_mph'],
-        cloud_coverage = data['current']['cloud']
+        cloud_coverage = data['current']['cloud'],
+        conn = conn
     )
+
+    close_connection(conn)
 
     message = (
             f"{generate_spacer()}\n"
@@ -109,6 +114,8 @@ def get_todays_forecast(postcode):
     evaluated_rain_forecast = evaluate_rain_forecast(today)
     summary = f"{today['day']['condition']['text']}"
 
+    conn = get_connection()
+
     # Insert forecast data into the database
     insert_weather_forecast(
             date = today['date'],
@@ -124,8 +131,11 @@ def get_todays_forecast(postcode):
             wind_mph = today['day']['maxwind_mph'],
             humidity = today['day']['avghumidity'],
             summary = summary,
-            created_at = datetime.datetime.now().isoformat()
+            created_at = datetime.datetime.now().isoformat(),
+            conn = conn
     )
+
+    close_connection(conn)
 
     # Build the message
     message = (
@@ -158,6 +168,8 @@ def get_tomorrows_forecast(postcode):
     evaluated_rain_forecast = evaluate_rain_forecast(tomorrow)
     summary = f"{tomorrow['day']['condition']['text']}"
 
+    conn = get_connection()
+
     # insert forecast data into the database
     insert_weather_forecast(
             date = tomorrow['date'],
@@ -173,9 +185,11 @@ def get_tomorrows_forecast(postcode):
             wind_mph = tomorrow['day']['maxwind_mph'],
             humidity = tomorrow['day']['avghumidity'],
             summary = summary,
-            created_at = datetime.datetime.now().isoformat()
+            created_at = datetime.datetime.now().isoformat(),
+            conn = conn
     )
 
+    close_connection(conn)
 
     message = (
             f"{generate_spacer()}\n"

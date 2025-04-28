@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta
 from utils import generate_spacer
 from config_loader import load_config
-from database import insert_pollen_forecast
+from database import insert_pollen_forecast, get_connection, close_connection
 
 CONFIG_PATH="config/config.yaml"
 
@@ -75,6 +75,8 @@ def get_pollen_forecast(latitude, longitude):
             "weed": categorise_pollen_levels(max(weed_values, default=None), pollen_thresholds['weed']),
     }
 
+    conn = get_connection()
+
     # Insert pollen forecast into database
 
     insert_pollen_forecast(
@@ -84,8 +86,11 @@ def get_pollen_forecast(latitude, longitude):
         tree_reading = max(tree_values, default=0),
         tree_level = summary['tree'],
         weed_reading = max(weed_values, default=0),
-        weed_level = summary['weed']
+        weed_level = summary['weed'],
+        conn = conn
     )
+
+    close_connection(conn)
 
     message = (
             f"{generate_spacer()}\n"
