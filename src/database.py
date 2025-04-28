@@ -62,6 +62,9 @@ def create_tables():
     )
     ''')
 
+    conn.commit()
+    conn.close()
+
 def insert_weather_forecast(date, location, overall_condition, temperature_min, temperature_max, average_temperature, rain_chance, rain_amount, evaluated_rain_chance, uv_index, wind_mph, humidity, summary, created_at):
 
     conn = get_connection()
