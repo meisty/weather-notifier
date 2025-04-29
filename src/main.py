@@ -49,9 +49,5 @@ def main():
     if should_send_daily_update():
         send_current_weather(current_weather, discord_webhook_url)
 
-    #send_current_weather(postcode, discord_webhook_url)
-
-
 if __name__ == "__main__":
     main()
-
