@@ -56,7 +56,7 @@ def retry_on_exception(max_retries=3, delay=2, exceptions=(Exception,)):
                     return func(*args, **kwargs)
                 except exceptions as e:
                     attempt += 1
-                    logging.warning(f"Retry {attempt + 1}/{max_retries} after error: {e}")
+                    logging.warning(f"Retry {attempt}/{max_retries} (1-based count: {attempt + 1}) after error: {e}")
                     if attempt >= max_retries:
                         raise
                     time.sleep(delay)
