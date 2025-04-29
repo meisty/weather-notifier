@@ -1,5 +1,7 @@
 import requests
+from utils import retry_on_exception
 
+@retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def send_to_discord(discord_webhook_url, message):
     """Sends a message to Discord."""
     payload = {"content": message}
