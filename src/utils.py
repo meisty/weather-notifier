@@ -1,6 +1,9 @@
 from opencage.geocoder import OpenCageGeocode
 import os
 import datetime
+import logging
+import functools
+import time
 
 def generate_spacer():
     return "-" * 40
@@ -42,3 +45,20 @@ def mark_sent_today():
     check_data_directory_exists()
     with open("data/last_sent.txt", "w") as f:
         f.write(today)
+
+def retry_on_exception(max_retries=3, delay=2, exceptions=(Exception,)):
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempt = 0
+            while attempt < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    attempt += 1
+                    logging.warning(f"Retry {attempt}/{max_retries} (1-based count: {attempt + 1}) after error: {e}")
+                    if attempt >= max_retries:
+                        raise
+                    time.sleep(delay)
+        return wrapper
+    return decorator_retry

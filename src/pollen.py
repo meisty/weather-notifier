@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timedelta
-from utils import generate_spacer
+from utils import generate_spacer, retry_on_exception
 from config_loader import load_config
 from database import insert_pollen_forecast, get_connection, close_connection
 
@@ -16,6 +16,7 @@ def categorise_pollen_levels(value, threshold):
     else:
         return "🔴 High"
 
+@retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def get_pollen_forecast(latitude, longitude):
     config = load_config(path=CONFIG_PATH)
     url = "https://air-quality-api.open-meteo.com/v1/air-quality"

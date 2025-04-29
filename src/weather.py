@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import json
-from utils import generate_spacer
+from utils import generate_spacer, retry_on_exception
 from database import insert_weather_forecast, insert_current_weather, get_connection, close_connection
 import datetime
 
@@ -45,6 +45,7 @@ def determine_condition(condition_text):
             break
     return emoji
 
+@retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def get_current_weather(postcode):
     try:
         params = build_params(postcode)
@@ -92,6 +93,7 @@ def get_current_weather(postcode):
     )
     return message
 
+@retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def get_todays_forecast(postcode):
     """Fetches today's forecast from WeatherAPI."""
     try:
@@ -152,6 +154,7 @@ def get_todays_forecast(postcode):
 
     return message
 
+@retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def get_tomorrows_forecast(postcode):
     try:
         params = build_params(postcode, extra="days=2")
