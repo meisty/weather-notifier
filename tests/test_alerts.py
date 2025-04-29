@@ -70,7 +70,7 @@ def test_70mph_gusts():
     forecast = create_forecast()
     forecast['current']['gust_mph'] = 72
     alerts = check_current_weather_alerts(forecast)
-    assert "**Wind guests 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure." in alerts
+    assert "**Wind gusts 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure." in alerts
 
 def test_multiple_alerts():
     forecast = create_forecast()
