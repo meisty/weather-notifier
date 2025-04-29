@@ -37,7 +37,7 @@ def check_current_weather_alerts(forecast):
     elif config['thresholds']['strong_gust'] < forecast['current']['gust_mph'] < config['thresholds']['extreme_gust']:
         alerts.append("**Wind gusts 60mph or above** ⚠️ Dangerous to walk in gusts that strong!\n")
     elif forecast['current']['gust_mph'] >= config['thresholds']['extreme_gust']:
-        alerts.append("**Wind guests 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure.")
+        alerts.append("**Wind gusts 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure.")
 
     return alerts
 
