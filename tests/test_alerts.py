@@ -50,7 +50,7 @@ def test_medium_wind_mph():
 
 def test_high_wind_mph():
     forecast = create_forecast()
-    forecast['current']['wind_mph'] = 65
+    forecast['current']['wind_mph'] = 64
     alerts = check_current_weather_alerts(forecast)
     assert "**Wind speed 64 or above** ⚠️ Storm conditions outside.  Only go out if absolutely necessary\n" in alerts
 
@@ -68,7 +68,7 @@ def test_60mph_gusts():
 
 def test_70mph_gusts():
     forecast = create_forecast()
-    forecast['current']['gust_mph'] = 72
+    forecast['current']['gust_mph'] = 70
     alerts = check_current_weather_alerts(forecast)
     assert "**Wind gusts 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure." in alerts
 

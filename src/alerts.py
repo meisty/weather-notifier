@@ -57,7 +57,7 @@ def check_thresholds(value, thresholds):
     """
     alerts = []
     for lower, upper, message in thresholds:
-        if lower < value <= upper:
+        if lower <= value <= upper:
             alerts.append(message)
     return alerts
 
