@@ -50,7 +50,7 @@ def test_medium_wind_mph():
 
 def test_high_wind_mph():
     forecast = create_forecast()
-    forecast['current']['wind_mph'] = 64
+    forecast['current']['wind_mph'] = 65
     alerts = check_current_weather_alerts(forecast)
     assert "**Wind speed 64 or above** ⚠️ Storm conditions outside.  Only go out if absolutely necessary\n" in alerts
 
@@ -82,3 +82,17 @@ def test_multiple_alerts():
     assert "**Wind gusts 60mph or above** ⚠️ Dangerous to walk in gusts that strong!\n" in alerts
     assert "**Temperature above 19°C** 🔥 Its heating up out there.  Stay hydrated and seek shade!\n" in alerts
     assert len(alerts) == 3
+
+def test_wind_boundary_value():
+    forecast = create_forecast()
+    forecast['current']['wind_mph'] = 64
+    alerts = check_current_weather_alerts(forecast)
+    assert len(alerts) == 1
+    assert "**Wind speed 64 or above** ⚠️ Storm conditions outside.  Only go out if absolutely necessary\n" in alerts
+
+def test_gust_boundary_value():
+    forecast = create_forecast()
+    forecast['current']['gust_mph'] = 60
+    alerts = check_current_weather_alerts(forecast)
+    assert len(alerts) == 1
+    assert "**Wind gusts 60mph or above** ⚠️ Dangerous to walk in gusts that strong!\n" in alerts
