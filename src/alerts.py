@@ -27,18 +27,38 @@ def check_current_weather_alerts(forecast):
     if forecast['current']['precip_mm'] >= config['thresholds']['precipitation_amount']:
         alerts.append("**Precipitation amount 5mm** ☔ Wet wet wet.  Best fetch that brolly.\n")
     
-    if config['thresholds']['medium_wind'] < forecast['current']['wind_mph'] < config['thresholds']['high_wind']:
-        alerts.append("**Wind speed 47mph or above** 🌬️ Strong winds out there.  Careful you don't get blown away\n")
-    elif forecast['current']['wind_mph'] >= config['thresholds']['high_wind']:
-        alerts.append("**Wind speed 64 or above** ⚠️ Storm conditions outside.  Only go out if absolutely necessary\n")
+    wind_speed_alerts = check_thresholds(
+        forecast['current']['wind_mph'],
+        [
+            (config['thresholds']['medium_wind'], config['thresholds']['high_wind'], "**Wind speed 47mph or above** 🌬️ Strong winds out there.  Careful you don't get blown away\n"),
+            (config['thresholds']['high_wind'], float('inf'), "**Wind speed 64 or above** ⚠️ Storm conditions outside.  Only go out if absolutely necessary\n"),
+        ]
+    )
+    alerts.extend(wind_speed_alerts)
     
-    if config['thresholds']['gust'] < forecast['current']['gust_mph'] < config['thresholds']['strong_gust']:
-        alerts.append("**Wind gusts 50mph or above** ⚠️ Gusts could cause damage to trees, powerlines and buildings.\n")
-    elif config['thresholds']['strong_gust'] < forecast['current']['gust_mph'] < config['thresholds']['extreme_gust']:
-        alerts.append("**Wind gusts 60mph or above** ⚠️ Dangerous to walk in gusts that strong!\n")
-    elif forecast['current']['gust_mph'] >= config['thresholds']['extreme_gust']:
-        alerts.append("**Wind gusts 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure.")
+    gust_alerts = check_thresholds(
+        forecast['current']['gust_mph'],
+        [
+            (config['thresholds']['gust'], config['thresholds']['strong_gust'], "**Wind gusts 50mph or above** ⚠️ Gusts could cause damage to trees, powerlines and buildings.\n"),
+            (config['thresholds']['strong_gust'], config['thresholds']['extreme_gust'], "**Wind gusts 60mph or above** ⚠️ Dangerous to walk in gusts that strong!\n"),
+            (config['thresholds']['extreme_gust'], float('inf'), "**Wind gusts 70mph or above** 💀 Danger to life.  Seek shelter and avoid exposure."),
+        ]
+    )
+    alerts.extend(gust_alerts)
+    return alerts
 
+def check_thresholds(value, thresholds):
+    """
+    Check a value against a list of thresholds and return matching alert messages.
+    :param value: The value to check (e.g., wind speed or gust).
+    :param thresholds: A list of tuples, where each tuple contains:
+                       (lower_bound, upper_bound, alert_message).
+    :return: A list of alert messages that match the value.
+    """
+    alerts = []
+    for lower, upper, message in thresholds:
+        if lower < value <= upper:
+            alerts.append(message)
     return alerts
 
 def current_weather_message(forecast):
