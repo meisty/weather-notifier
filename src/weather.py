@@ -58,7 +58,6 @@ def get_current_weather(postcode):
         return None
 
     location = data['location']['name']
-    emoji = determine_condition(data['current']['condition']['text'].lower())
 
     conn = get_connection()
 
@@ -81,17 +80,7 @@ def get_current_weather(postcode):
 
     close_connection(conn)
 
-    message = (
-            f"{generate_spacer()}\n"
-            f"📍 **Current Weather for {location}**\n"
-            f"{emoji} **Current Condition**: {data['current']['condition']['text']}\n"
-            f"🌡️ **Current Temp**: {data['current']['temp_c']}°C\n"
-            f"🥶 **Feels Like**: {data['current']['feelslike_c']}°C\n"
-            f"🌧️ **Precipitation**: {data['current']['precip_mm']}mm\n"
-            f"💧 **Humidity**: {data['current']['humidity']}\n"
-            f"🔆 **UV Index**: {data['current']['uv']}\n\n"
-    )
-    return message
+    return data
 
 @retry_on_exception(max_retries=5, delay=3, exceptions=(requests.RequestException,))
 def get_todays_forecast(postcode):
